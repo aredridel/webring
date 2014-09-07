@@ -1,0 +1,18 @@
+{
+  "name": "webring",
+  "version": "1.0.0",
+  "description": "A webring redirector",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js",
+    "start": "node index.js"
+  },
+  "author": "Aria Stewart <aredridel@nbtsc.org>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.8.7",
+    "handlebars-engine": "0.0.1",
+    "kraken-js": "^1.0.3",
+    "tape": "^2.14.0"
+  }
+}

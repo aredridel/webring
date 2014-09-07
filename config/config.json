@@ -1,0 +1,49 @@
+{
+
+    "express": {
+        "view cache": false,
+        "view engine": "hbs"
+    },
+
+    "view engines": {
+        "hbs": {
+            "module": "handlebars-engine"
+        }
+    },
+
+
+    "middleware": {
+
+        "static": {
+            "module": {
+                "arguments": [ "path:./public" ]
+            }
+        },
+
+        "router": {
+            "module": {
+                "arguments": [{ "directory": "path:./controllers" }]
+            }
+        },
+
+
+        "fileNotFound": {
+            "enabled": true,
+            "priority": 130,
+            "module": {
+                "name": "kraken-js/middleware/404",
+                "arguments": [ "errors/404" ]
+            }
+        },
+
+        "serverError": {
+            "enabled": true,
+            "priority": 140,
+            "module": {
+                "name": "kraken-js/middleware/500",
+                "arguments": [ "errors/500" ]
+            }
+        }
+
+    }
+}
