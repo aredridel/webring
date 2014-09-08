@@ -4,5 +4,14 @@
 
 <form action='/join' method='post'>
     <input type='hidden' name='_csrf' value='{{_csrf}}'>
+
+    <p>
+        Your Website Name <input type='text' name='title'>
+    </p>
+
+    <p>
+        Your URL <input type='text' name='url'>
+    </p>
+
     <button type='submit'>Join!</button>
 </form>
