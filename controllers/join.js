@@ -7,17 +7,26 @@ module.exports = function (router) {
     });
 
     router.post('/', function (req, res) {
-        var u = url.parse(req.body.url);
-        db.get(u.host, handleError(function (data) {
+        db.get(req.body.url, handleError(function (data) {
             if (data) {
                 data = JSON.parse(data);
-                console.log(req.body, data, u, err);
                 res.render('success');
             } else {
-                db.put(u.host, JSON.stringify({
-                    url: req.body.url,
-                    title: req.body.title
-                }), handleError(function () {
+                db.batch([
+                    {
+                        type: 'put',
+                        key: req.body.url,
+                        value: JSON.stringify({
+                            url: req.body.url,
+                            validated: false
+                        })
+                    },
+                    {
+                        type: 'put',
+                        key: 'pending ' + req.body.url,
+                        value: req.body.url
+                    }
+                ], handleError(function () {
                     res.render('success');
                 }));
             }
