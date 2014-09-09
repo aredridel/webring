@@ -4,4 +4,4 @@ var app = express();
 
 app.use(kraken());
 
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 7772);
