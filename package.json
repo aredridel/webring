@@ -13,8 +13,8 @@
     "express": "^4.8.7",
     "handlebars-engine": "0.0.1",
     "kraken-js": "^1.0.3",
-    "leveldown": "^1.0.0",
-    "levelup": "^0.19.0",
-    "tape": "^2.14.0"
+    "level": "^0.18.0",
+    "tape": "^2.14.0",
+    "through2": "^0.6.1"
   }
 }
