@@ -10,8 +10,10 @@
   "author": "Aria Stewart <aredridel@nbtsc.org>",
   "license": "ISC",
   "dependencies": {
+    "bl": "^0.9.3",
     "express": "^4.8.7",
     "handlebars-engine": "0.0.1",
+    "jsdom": "^1.0.3",
     "kraken-js": "^1.0.3",
     "level": "^0.18.0",
     "tape": "^2.14.0",
