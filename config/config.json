@@ -25,6 +25,29 @@
                 "arguments": [{ "directory": "path:./controllers" }]
             }
         },
+ 
+        "session": {
+            "enabled": true,
+            "priority": 100,
+            "module": {
+                "name": "express-session",
+                "arguments": [
+                    {
+                        "key": "",
+                        "secret": "leveldb-init-random:session-secret",
+                        "store": "require:./lib/sessionStore",
+                        "cookie": {
+                            "path": "/",
+                            "httpOnly": true,
+                            "maxAge": null
+                        },
+                        "resave": true,
+                        "saveUninitialized": true,
+                        "proxy": null
+                    }
+                ]
+            }
+        },
 
 
         "fileNotFound": {

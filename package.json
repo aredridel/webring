@@ -12,10 +12,12 @@
   "dependencies": {
     "bl": "^0.9.3",
     "express": "^4.8.7",
+    "express-session": "^1.9.1",
     "handlebars-engine": "0.0.1",
     "jsdom": "^1.0.3",
     "kraken-js": "^1.0.3",
     "level": "^0.18.0",
+    "shortstop-leveldb-init-random": "^1.0.1",
     "tape": "^2.14.0",
     "through2": "^0.6.1"
   }
