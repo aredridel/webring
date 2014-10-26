@@ -1,3 +1,5 @@
+"use strict";
+
 var kraken = require('kraken-js');
 var express = require('express');
 var app = express();
