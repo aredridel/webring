@@ -17,6 +17,7 @@
     "jsdom": "^1.0.3",
     "kraken-js": "^1.0.3",
     "level": "^0.18.0",
+    "level-sublevel": "^6.3.15",
     "shortstop-leveldb-init-random": "^1.0.1",
     "tape": "^2.14.0",
     "through2": "^0.6.1"
