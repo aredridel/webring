@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "tape test/*.js",
+    "ndm": "ndm",
     "start": "node index.js"
   },
   "author": "Aria Stewart <aredridel@nbtsc.org>",
@@ -18,8 +19,14 @@
     "kraken-js": "^1.0.3",
     "level": "^0.18.0",
     "level-sublevel": "^6.3.15",
+    "ndm": "^3.7.2",
     "shortstop-leveldb-init-random": "^2.0.0",
     "tape": "^2.14.0",
     "through2": "^0.6.1"
+  },
+  "service": {
+    "env": {
+      "PORT": "7772"
+    }
   }
 }
