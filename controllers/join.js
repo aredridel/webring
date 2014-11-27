@@ -7,8 +7,8 @@ module.exports = function (router) {
     });
 
     router.post('/', function (req, res) {
-        sites.enqueue(req.body.url, handleError(function (data) {
-            res.render('success');
+        sites.enqueue(req.body.url, req.app.kraken.get('baseURL'), handleError(function (data) {
+            res.render('success', { siteURL: req.body.url, baseURL: req.app.kraken.get('baseURL') });
         }));
 
         function handleError(fn) {
