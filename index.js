@@ -1,5 +1,6 @@
 "use strict";
 
+const dotenv = require('dotenv').config();
 var kraken = require('kraken-js');
 var express = require('express');
 var app = express();
