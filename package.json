@@ -19,7 +19,7 @@
     "handlebars": "^4.1.2",
     "handlebars-engine": "0.0.0",
     "jsdom": "^15.1.1",
-    "kraken-js": "^1.0.6",
+    "kraken-js": "^2.2.0",
     "level": "^5.0.1",
     "level-sublevel": "^6.6.5",
     "node": "^12.6.0",
