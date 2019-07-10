@@ -14,14 +14,14 @@
     "bl": "^1.2.1",
     "concat-stream": "^1.6.0",
     "dotenv": "^4.0.0",
-    "express": "^4.16.2",
-    "express-session": "^1.15.6",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
     "handlebars": "^4.1.2",
     "handlebars-engine": "0.0.0",
     "jsdom": "^7.2.2",
     "kraken-js": "^1.0.6",
     "level": "^1.7.0",
-    "level-sublevel": "^6.6.1",
+    "level-sublevel": "^6.6.5",
     "node": "^8.9.0",
     "shortstop-leveldb-init-random": "^2.0.0",
     "through2": "^0.6.5"
@@ -32,6 +32,6 @@
     }
   },
   "devDependencies": {
-    "tape": "^4.8.0"
+    "tape": "^4.11.0"
   }
 }
