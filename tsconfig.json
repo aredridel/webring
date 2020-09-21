@@ -1,0 +1,13 @@
+{
+  "typeAcquisition": {
+    "enable": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "lib": ["ES2020"]
+  }
+}

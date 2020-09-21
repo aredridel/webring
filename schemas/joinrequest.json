@@ -1,0 +1,9 @@
+{
+  "title": "Join Request",
+  "type": "object",
+  "properties": {
+    "url": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "required": ["url"]
+}

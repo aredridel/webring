@@ -1,15 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <h1>Hooray!</h1>
 
-<p>Your site has been added to the web ring, and will be active once you add the code to your page.</p>
+<p>
+  Your site has been added to the web ring, and will be active once you add the
+  code to your page. Format it however you like, but you have to link both the
+  forward and backward URLs.
+</p>
 
 <pre>
-&lt;a href='{{baseURL}}/next/{{siteURL}}'&gt;Next&lt;/a&gt;
-&lt;a href='{{baseURL}}/prev/{{siteURL}}'&gt;Previous&lt;/a&gt;
+&lt;a href='{{ baseURL }}/prev/{{ siteURL }}'&gt;Previous&lt;/a&gt;
+&lt;a href='{{ baseURL }}/next/{{ siteURL }}'&gt;Next&lt;/a&gt;
 </pre>
 
-<form action='/confirm/' method='post'>
-    <input type='hidden' name='_csrf' value='{{_csrf}}'>
-    <button>I did this</button>
+<form action="/confirm" method="post">
+  <input type="hidden" name="url" value="{{ siteURL }}" />
+  <button>I did this</button>
 </form>
