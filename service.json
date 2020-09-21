@@ -1,8 +1,0 @@
-{
-  "webring": {
-    "description": "ndm test service",
-    "scripts": {
-      "start": "node ./index.js"
-    }
-  }
-}
