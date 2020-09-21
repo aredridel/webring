@@ -15,7 +15,6 @@
     "fastify": "^3.4.1",
     "fastify-favicon": "^3.0.0",
     "fastify-formbody": "^5.0.0",
-    "fs-ext": "^2.0.0",
     "handlebars": "^4.7.6",
     "jsdom": "^16.4.0",
     "ts-node": "^9.0.0",
