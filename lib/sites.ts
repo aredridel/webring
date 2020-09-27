@@ -70,7 +70,7 @@ export async function nextSite(site: string): Promise<string> {
   if (idx == -1) {
     return randomSite();
   } else {
-    return list[(idx + 1) % list.length];
+    return list[(idx + list.length + 1) % list.length];
   }
 }
 
@@ -80,7 +80,7 @@ export async function prevSite(site: string): Promise<string> {
   if (idx == -1) { 
     return randomSite();
   } else {
-    return list[(idx - 1) % list.length];
+    return list[(idx + list.length - 1) % list.length];
   }
 }
 
