@@ -54,11 +54,19 @@ export default function(
     }
   );
 
+  app.head("/next/*", async (request, reply) => {
+    const site = await nextSite(request.params["*"]);
+    reply.redirect(307, site);
+  });
   app.get("/next/*", async (request, reply) => {
     const site = await nextSite(request.params["*"]);
     reply.redirect(307, site);
   });
 
+  app.head("/prev/*", async (request, reply) => {
+    const site = await prevSite(request.params["*"]);
+    reply.redirect(307, site);
+  });
   app.get("/prev/*", async (request, reply) => {
     const site = await prevSite(request.params["*"]);
     reply.redirect(307, site);
