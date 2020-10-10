@@ -1,9 +1,9 @@
-import { fastify } from "fastify";
+import fastify from "fastify";
 import formbody from "fastify-formbody";
 import favicon from "fastify-favicon";
 import { config } from "dotenv";
 
-import routes from "./routes";
+import routes from "./routes.mjs";
 
 config();
 

@@ -1,20 +1,15 @@
-import {
-  FastifyInstance,
-  FastifyRegisterOptions,
-  FastifyPluginOptions,
-} from "fastify";
-import { verifySite } from "./lib/verify";
-import { enqueue, nextSite, prevSite, randomSite, addSite } from "./lib/sites";
-import { render } from "./lib/render";
+import { verifySite } from "./lib/verify.mjs";
+import { enqueue, nextSite, prevSite, randomSite, addSite } from "./lib/sites.mjs";
+import { render } from "./lib/render.mjs";
+import { readFileSync } from "fs";
 
-import JoinRequestSchema from "./schemas/joinrequest.json";
-import { JoinRequest as JoinRequestInterface } from "./types/schemas/joinrequest";
+const JoinRequestSchema = JSON.parse(readFileSync('schemas/joinrequest.json', 'utf-8'));
 
 export default function(
-  app: FastifyInstance,
-  _opts: FastifyRegisterOptions<FastifyPluginOptions>,
-  done: () => void
-): void {
+  app,
+  _opts,
+  done
+){
   app.get("/", async (_request, reply) => {
     reply.type("text/html; charset=utf-8");
     reply.send(await render("views/index.hbs"));
@@ -25,7 +20,7 @@ export default function(
     reply.send(await render("views/join.hbs"));
   });
 
-  app.post<{ Body: JoinRequestInterface }>(
+  app.post(
     "/join",
     { schema: { body: JoinRequestSchema } },
     async (request, reply) => {
@@ -41,7 +36,7 @@ export default function(
     }
   );
 
-  app.post<{ Body: JoinRequestInterface }>(
+  app.post(
     "/confirm",
     { schema: { body: { JoinRequestSchema } } },
     async (request, reply) => {
