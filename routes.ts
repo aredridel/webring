@@ -54,20 +54,24 @@ export default function(
     }
   );
 
-  app.head("/next/*", async (request, reply) => {
+  type SiteParams = {
+    "*": string
+  };
+
+  app.head<{Params: SiteParams}>("/next/*", async (request, reply) => {
     const site = await nextSite(request.params["*"]);
     reply.redirect(307, site);
   });
-  app.get("/next/*", async (request, reply) => {
+  app.get<{Params: SiteParams}>("/next/*", async (request, reply) => {
     const site = await nextSite(request.params["*"]);
     reply.redirect(307, site);
   });
 
-  app.head("/prev/*", async (request, reply) => {
+  app.head<{Params: SiteParams}>("/prev/*", async (request, reply) => {
     const site = await prevSite(request.params["*"]);
     reply.redirect(307, site);
   });
-  app.get("/prev/*", async (request, reply) => {
+  app.get<{Params: SiteParams}>("/prev/*", async (request, reply) => {
     const site = await prevSite(request.params["*"]);
     reply.redirect(307, site);
   });

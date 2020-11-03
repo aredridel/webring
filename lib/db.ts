@@ -1,3 +1,4 @@
+// @ts-ignore
 import level from "level"
 import sublevel from "level-sublevel"
 import path from "path"
