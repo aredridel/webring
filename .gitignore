@@ -4,3 +4,4 @@ config/config.json
 *.swp
 sites
 pending
+types/schemas
