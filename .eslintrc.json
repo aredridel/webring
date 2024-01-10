@@ -2,7 +2,8 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "rules": {
-    "no-undef": 1
+    "no-undef": 1,
+    "@typescript-eslint/no-non-null-assertion": "off"
   },
   "env": {
     "node": true

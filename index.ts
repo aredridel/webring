@@ -1,5 +1,5 @@
 import { fastify } from "fastify";
-import formbody from "fastify-formbody";
+import formbody from "@fastify/formbody";
 import favicon from "fastify-favicon";
 import { config } from "dotenv";
 
