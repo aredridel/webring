@@ -4,7 +4,7 @@ import {
   FastifyPluginOptions,
 } from "fastify";
 import { verifySite } from "./lib/verify";
-import { enqueue, nextSite, prevSite, randomSite, addSite } from "./lib/sites";
+import { enqueue, nextSite, prevSite, randomSite, addSite, verifySites } from "./lib/sites";
 import { render } from "./lib/render";
 
 import JoinRequestSchema from "./schemas/joinrequest.json";
@@ -53,6 +53,11 @@ export default function(
       }
     }
   );
+
+  app.post("/verify-all", async(_request, reply) => {
+    verifySites();
+    reply.code(200).send("");
+  });
 
   type SiteParams = {
     "*": string

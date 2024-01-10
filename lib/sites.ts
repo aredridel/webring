@@ -5,6 +5,7 @@ import { resolve } from "path";
 
 const dir = process.env.DATABASE || '.';
 const PENDING = resolve(dir, "pending.json");
+const DEAD = resolve(dir, "dead.json");
 const SITES = resolve(dir, "sites.json");
 
 const waiting: Record<string, Promise<unknown>> = {};
@@ -23,7 +24,6 @@ async function waitFor<T>(key: string, task: () => Promise<T>): Promise<T> {
   }
   return ret;
 }
-
 
 export async function enqueue(site: string): Promise<void> {
   return waitFor(PENDING, async () => {
@@ -67,7 +67,6 @@ async function removeFrom(fh: FileHandle, line: string): Promise<void> {
   await fh.writeFile(JSON.stringify(newList, null, 2));
 }
 
-
 export async function addSite(site: string): Promise<void> {
   return waitFor(PENDING, async () => {
     return waitFor(SITES, async () => {
@@ -76,22 +75,38 @@ export async function addSite(site: string): Promise<void> {
       try {
         await appendTo(sites, site);
         await removeFrom(pending, site);
-        const data = await pending.readFile("utf-8");
-        const list = data ? JSON.parse(data) : [];
-        if (!list.includes(site)) list.push(site);
-        await pending.truncate();
-        await pending.writeFile(JSON.stringify(list, null, 2));
       } finally {
-        await pending.close();
+        await Promise.all([
+          pending.close(),
+          sites.close()
+        ]);
       }
     });
   });
 }
 
 export async function verifySites(): Promise<void> {
-  const list = await getList(PENDING);
+  const list = await getList(SITES);
   for (const site of list) {
-    await verifySite(site);
+    console.warn("Verifying", site);
+    if (!await verifySite(site)) {
+      await waitFor(DEAD, async () => {
+        return waitFor(SITES, async () => {
+          console.warn(site, "is dead, moving to dead list");
+          const dead: FileHandle = await open(DEAD, "a+");
+          const sites: FileHandle = await open(SITES, "a+");
+          try {
+            await appendTo(dead, site);
+            await removeFrom(sites, site);
+          } finally {
+            await Promise.all([
+              dead.close(),
+              sites.close()
+            ]);
+          }
+        });
+      });
+    }
   }
 }
 
