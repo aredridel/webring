@@ -4,25 +4,51 @@ import { open } from "fs/promises";
 import { resolve } from "path";
 
 const dir = process.env.DATABASE || '.';
+const PENDING = resolve(dir, "pending.json");
+const SITES = resolve(dir, "sites.json");
+
+const waiting: Record<string, Promise<unknown>> = {};
+async function waitFor<T>(key: string, task: () => Promise<T>): Promise<T> {
+  const prev = waiting[key];
+  let finish;
+  waiting[key] = new Promise((accept) => {
+    finish = accept;
+  });
+  let ret: T;
+  try {
+    await prev;
+    ret = await task();
+  } finally {
+    finish!();
+  }
+  return ret;
+}
+
 
 export async function enqueue(site: string): Promise<void> {
-  const pending: FileHandle = await open(resolve(dir, "pending.json"), "a+");
-  try {
-    await appendTo(pending, site);
-  } finally {
-    await pending.close();
-  }
+  return waitFor(PENDING, async () => {
+    const pending: FileHandle = await open(PENDING, "a+");
+    try {
+      await appendTo(pending, site);
+    } finally {
+      await pending.close();
+    }
+  });
 }
 
 async function getList(file: string): Promise<Array<string>> {
-  const pending = await open(file, "r");
-  try {
-    const data = await pending.readFile("utf-8");
-    const list = data ? JSON.parse(data) : [];
-    return list;
-  } finally {
-    await pending.close();
-  }
+  return waitFor(file, async () => {
+    const pending = await open(file, "r");
+    try {
+      const data = await pending.readFile("utf-8");
+      const list = data ? JSON.parse(data) : [];
+      return list;
+    } catch (e) {
+      throw Object.assign(new Error(`error reading '${file}'`), {cause: e});
+    } finally {
+      await pending.close();
+    }
+  });
 }
 
 async function appendTo(fh: FileHandle, line: string): Promise<void> {
@@ -41,31 +67,36 @@ async function removeFrom(fh: FileHandle, line: string): Promise<void> {
   await fh.writeFile(JSON.stringify(newList, null, 2));
 }
 
+
 export async function addSite(site: string): Promise<void> {
-  const pending: FileHandle = await open(resolve(dir, "pending.json"), "a+");
-  const sites: FileHandle = await open(resolve(dir, "sites.json"), "a+");
-  try {
-    await appendTo(sites, site);
-    await removeFrom(pending, site);
-    const data = await pending.readFile("utf-8");
-    const list = data ? JSON.parse(data) : [];
-    if (!list.includes(site)) list.push(site);
-    await pending.truncate();
-    await pending.writeFile(JSON.stringify(list, null, 2));
-  } finally {
-    await pending.close();
-  }
+  return waitFor(PENDING, async () => {
+    return waitFor(SITES, async () => {
+      const pending: FileHandle = await open(PENDING, "a+");
+      const sites: FileHandle = await open(SITES, "a+");
+      try {
+        await appendTo(sites, site);
+        await removeFrom(pending, site);
+        const data = await pending.readFile("utf-8");
+        const list = data ? JSON.parse(data) : [];
+        if (!list.includes(site)) list.push(site);
+        await pending.truncate();
+        await pending.writeFile(JSON.stringify(list, null, 2));
+      } finally {
+        await pending.close();
+      }
+    });
+  });
 }
 
 export async function verifySites(): Promise<void> {
-  const list = await getList(resolve(dir, "pending.json"));
+  const list = await getList(PENDING);
   for (const site of list) {
     await verifySite(site);
   }
 }
 
 export async function nextSite(site: string): Promise<string> {
-  const list = await getList(resolve(dir, "sites.json"));
+  const list = await getList(SITES);
   const idx = list.indexOf(site);
   if (idx == -1) {
     return randomSite();
@@ -75,7 +106,7 @@ export async function nextSite(site: string): Promise<string> {
 }
 
 export async function prevSite(site: string): Promise<string> {
-  const list = await getList(resolve(dir, "sites.json"));
+  const list = await getList(SITES);
   const idx = list.indexOf(site);
   if (idx == -1) { 
     return randomSite();
@@ -85,6 +116,6 @@ export async function prevSite(site: string): Promise<string> {
 }
 
 export async function randomSite(): Promise<string> {
-  const list = await getList(resolve(dir, "sites.json"));
+  const list = await getList(SITES);
   return list[Math.floor(Math.random() * list.length)]
 }
