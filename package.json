@@ -30,8 +30,8 @@
     "@types/node": "^20.10.8",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
-    "eslint": "^7.12.1",
-    "json-schema-to-typescript": "^9.1.1",
-    "pino-pretty": "^4.3.0"
+    "eslint": "^8.56.0",
+    "json-schema-to-typescript": "^13.1.1",
+    "pino-pretty": "^10.3.1"
   }
 }

@@ -21,7 +21,7 @@ const start = async () => {
     process.exit(1);
   }
   try {
-    await app.listen(Number(process.env.PORT) || 7772, "::");
+    await app.listen({port: Number(process.env.PORT) || 7772, host: "::"});
   } catch (err) {
     app.log.error(err);
     process.exit(1);
