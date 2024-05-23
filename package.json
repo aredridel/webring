@@ -12,13 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "@fastify/formbody": "^7.4.0",
-    "dotenv": "^16.3.1",
-    "fastify": "^4.25.2",
+    "dotenv": "^16.4.5",
+    "fastify": "^4.27.0",
     "fastify-favicon": "^4.3.0",
     "handlebars": "^4.7.8",
     "jsdom": "^23.0.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.0.5"
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
   },
   "service": {
     "env": {
@@ -27,11 +27,11 @@
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.10.8",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
-    "eslint": "^8.56.0",
-    "json-schema-to-typescript": "^13.1.1",
-    "pino-pretty": "^10.3.1"
+    "@types/node": "^20.10.12",
+    "@typescript-eslint/eslint-plugin": "^7.10.0",
+    "@typescript-eslint/parser": "^7.10.0",
+    "eslint": "^8.57.0",
+    "json-schema-to-typescript": "^14.0.4",
+    "pino-pretty": "^11.1.0"
   }
 }
