@@ -17,7 +17,7 @@
     "fastify-favicon": "^4.3.0",
     "handlebars": "^4.7.8",
     "jsdom": "^23.0.0",
-    "tsx": "^4.11.0",
+    "tsx": "^4.20.3",
     "typescript": "^5.4.5"
   },
   "service": {
