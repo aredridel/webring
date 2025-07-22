@@ -37,7 +37,7 @@ export default function(
     { schema: { body: JoinRequestSchema } },
     async (request, reply) => {
       const url = request.body.url;
-      await enqueue(url);
+      enqueue(url);
       reply.type("text/html; charset=utf-8");
       reply.send(
         await render("views/success.hbs", {
@@ -53,7 +53,7 @@ export default function(
     { schema: { body: JoinRequestSchema } },
     async (request, reply) => {
       if (await verifySite(request.body.url)) {
-        await addSite(request.body.url);
+        addSite(request.body.url);
         reply.send("The links are good! You're part of the web ring!");
       } else {
         reply.send("Couldn't find the link on your page. Try again?");
@@ -71,26 +71,26 @@ export default function(
   };
 
   app.head<{ Params: SiteParams }>("/next/*", async (request, reply) => {
-    const site = await nextSite(request.params["*"]);
-    reply.redirect(307, site);
+    const site = nextSite(request.params["*"]);
+    reply.redirect(site, 307);
   });
   app.get<{ Params: SiteParams }>("/next/*", async (request, reply) => {
-    const site = await nextSite(request.params["*"]);
-    reply.redirect(307, site);
+    const site = nextSite(request.params["*"]);
+    reply.redirect(site, 307);
   });
 
   app.head<{ Params: SiteParams }>("/prev/*", async (request, reply) => {
-    const site = await prevSite(request.params["*"]);
-    reply.redirect(307, site);
+    const site = prevSite(request.params["*"]);
+    reply.redirect(site, 307);
   });
   app.get<{ Params: SiteParams }>("/prev/*", async (request, reply) => {
-    const site = await prevSite(request.params["*"]);
-    reply.redirect(307, site);
+    const site = prevSite(request.params["*"]);
+    reply.redirect(site, 307);
   });
 
   app.get("/random", async (_request, reply) => {
-    const site = await randomSite();
-    reply.redirect(307, site);
+    const site = randomSite();
+    reply.redirect(site, 307);
   });
 
   done();

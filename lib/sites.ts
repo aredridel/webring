@@ -1,130 +1,65 @@
-import type { FileHandle } from "fs/promises";
 import { verifySite } from "./verify.ts";
-import { open } from "fs/promises";
 import { resolve } from "path";
+import { DatabaseSync } from "node:sqlite";
 
 const dir = process.env.DATABASE || ".";
-const PENDING = resolve(dir, "pending.json");
-const DEAD = resolve(dir, "dead.json");
-const SITES = resolve(dir, "sites.json");
 
-const waiting: Record<string, Promise<unknown>> = {};
-async function waitFor<T>(key: string, task: () => Promise<T>): Promise<T> {
-  const prev = waiting[key];
-  let finish;
-  waiting[key] = new Promise((accept) => {
-    finish = accept;
-  });
-  let ret: T;
-  try {
-    await prev;
-    ret = await task();
-  } finally {
-    finish!();
-  }
-  return ret;
+const DB = new DatabaseSync(resolve(dir, "sites.db"));
+
+DB.exec(`
+  CREATE TABLE IF NOT EXISTS sites(
+    url TEXT PRIMARY KEY,
+    pending INT NOT NULL,
+    dead TEXT,
+    last_verified TEXT
+  ) STRICT 
+`);
+
+const enqueue_ = DB.prepare("INSERT INTO sites (url, pending) VALUES (?, true)");
+export function enqueue(site: string) {
+  enqueue_.run(site);
 }
 
-export async function enqueue(site: string): Promise<void> {
-  return waitFor(PENDING, async () => {
-    const pending: FileHandle = await open(PENDING, "a+");
-    try {
-      await appendTo(pending, site);
-    } finally {
-      await pending.close();
-    }
-  });
+const addSite_ = DB.prepare("UPDATE sites SET pending = false WHERE url = ?");
+export function addSite(site: string): void {
+  addSite_.run(site);
 }
 
-async function getList(file: string): Promise<Array<string>> {
-  return waitFor(file, async () => {
-    const pending = await open(file, "r");
-    try {
-      const data = await pending.readFile("utf-8");
-      const list = data ? JSON.parse(data) : [];
-      return list;
-    } catch (e) {
-      throw Object.assign(new Error(`error reading '${file}'`), { cause: e });
-    } finally {
-      await pending.close();
-    }
-  });
-}
-
-async function appendTo(fh: FileHandle, line: string): Promise<void> {
-  const data = await fh.readFile("utf-8");
-  const list = data ? JSON.parse(data) : [];
-  if (!list.includes(line)) list.push(line);
-  await fh.truncate();
-  await fh.writeFile(JSON.stringify(list, null, 2));
-}
-
-async function removeFrom(fh: FileHandle, line: string): Promise<void> {
-  const data = await fh.readFile("utf-8");
-  const list: Array<string> = data ? JSON.parse(data) : [];
-  const newList = list.filter((e) => e != line);
-  await fh.truncate();
-  await fh.writeFile(JSON.stringify(newList, null, 2));
-}
-
-export async function addSite(site: string): Promise<void> {
-  return waitFor(PENDING, async () => {
-    return waitFor(SITES, async () => {
-      const pending: FileHandle = await open(PENDING, "a+");
-      const sites: FileHandle = await open(SITES, "a+");
-      try {
-        await appendTo(sites, site);
-        await removeFrom(pending, site);
-      } finally {
-        await Promise.all([pending.close(), sites.close()]);
-      }
-    });
-  });
-}
-
+const getToVerify = DB.prepare("SELECT url FROM sites WHERE pending = true AND dead IS NULL OR last_verified < DATE('now', '-1 month')");
+const markSiteDead = DB.prepare("UPDATE sites SET dead = ? WHERE url = ?");
 export async function verifySites(): Promise<void> {
-  const list = await getList(SITES);
-  for (const site of list) {
-    console.warn("Verifying", site);
-    if (!(await verifySite(site))) {
-      await waitFor(DEAD, async () => {
-        return waitFor(SITES, async () => {
-          console.warn(site, "is dead, moving to dead list");
-          const dead: FileHandle = await open(DEAD, "a+");
-          const sites: FileHandle = await open(SITES, "a+");
-          try {
-            await appendTo(dead, site);
-            await removeFrom(sites, site);
-          } finally {
-            await Promise.all([dead.close(), sites.close()]);
-          }
-        });
-      });
+  const list = getToVerify.all();
+  for (const { url } of list) {
+    console.warn("Verifying", url);
+    if (!(await verifySite(url as string))) {
+      console.warn(url, "is dead, moving to dead list");
+      markSiteDead.run(new Date().toISOString(), url)
     }
   }
 }
 
-export async function nextSite(site: string): Promise<string> {
-  const list = await getList(SITES);
-  const idx = list.indexOf(site);
-  if (idx == -1) {
-    return randomSite();
+const getNext = DB.prepare("SELECT url FROM sites WHERE pending = false AND dead IS NULL AND rowid > (SELECT rowid FROM sites WHERE url = ?) LIMIT 1");
+export function nextSite(site: string): string {
+  const next = getNext.get(site);
+  if (next) {
+    return next.url as string;
   } else {
-    return list[(idx + list.length + 1) % list.length];
+    return randomSite();
   }
 }
 
-export async function prevSite(site: string): Promise<string> {
-  const list = await getList(SITES);
-  const idx = list.indexOf(site);
-  if (idx == -1) {
-    return randomSite();
+const getPrev = DB.prepare("SELECT url FROM sites WHERE pending = false AND dead IS NULL AND rowid < (SELECT rowid FROM sites WHERE url = ?) LIMIT 1");
+export function prevSite(site: string): string {
+  const prev = getPrev.get(site);
+  if (prev) {
+    return prev.url as string;
   } else {
-    return list[(idx + list.length - 1) % list.length];
+    return randomSite();
   }
 }
 
-export async function randomSite(): Promise<string> {
-  const list = await getList(SITES);
-  return list[Math.floor(Math.random() * list.length)];
+const getRandom = DB.prepare("SELECT url FROM sites WHERE ROWID >= (abs(random()) % (SELECT max(ROWID) FROM sites)) LIMIT 1");
+export function randomSite(): string {
+  const site = getRandom.get();
+  return site!.url as string;
 }
