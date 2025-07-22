@@ -15,7 +15,7 @@ DB.exec(`
   ) STRICT 
 `);
 
-const enqueue_ = DB.prepare("INSERT INTO sites (url, pending) VALUES (?, true)");
+const enqueue_ = DB.prepare("INSERT INTO sites (url, pending) VALUES (?, true) ON CONFLICT (url) WHERE dead = 1 DO UPDATE SET pending = 1, dead = 0");
 export function enqueue(site: string) {
   enqueue_.run(site);
 }
