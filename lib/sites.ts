@@ -27,6 +27,7 @@ export function addSite(site: string): void {
 
 const getToVerify = DB.prepare("SELECT url FROM sites WHERE pending = true AND dead IS NULL OR last_verified < DATE('now', '-1 month')");
 const markSiteDead = DB.prepare("UPDATE sites SET dead = ? WHERE url = ?");
+const updateLastVerified = DB.prepare("UPDATE sites SET last_verified = datetime('now') WHERE url = ?");
 export async function verifySites(): Promise<void> {
   const list = getToVerify.all();
   for (const { url } of list) {
@@ -34,6 +35,8 @@ export async function verifySites(): Promise<void> {
     if (!(await verifySite(url as string))) {
       console.warn(url, "is dead, moving to dead list");
       markSiteDead.run(new Date().toISOString(), url)
+    } else {
+      updateLastVerified.run(url);
     }
   }
 }
