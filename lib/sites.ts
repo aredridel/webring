@@ -25,9 +25,9 @@ export function addSite(site: string): void {
   addSite_.run(site);
 }
 
-const getToVerify = DB.prepare("SELECT url FROM sites WHERE pending = true AND dead IS NULL OR last_verified < DATE('now', '-1 month')");
+const getToVerify = DB.prepare("SELECT url FROM sites WHERE dead IS NULL AND (pending = true OR DATE(last_verified) < DATE('now', '-1 month'))");
 const markSiteDead = DB.prepare("UPDATE sites SET dead = ? WHERE url = ?");
-const updateLastVerified = DB.prepare("UPDATE sites SET last_verified = datetime('now') WHERE url = ?");
+const updateLastVerified = DB.prepare("UPDATE sites SET last_verified = datetime('now'), pending = false WHERE url = ?");
 export async function verifySites(): Promise<void> {
   const list = getToVerify.all();
   for (const { url } of list) {
