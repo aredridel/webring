@@ -5,7 +5,7 @@ class TimeoutResourceLoader extends ResourceLoader {
     const p = super.fetch(url, options);
     if (!p) return p;
     let finished = false;
-    p.then(() => finished = true).catch(() => {});
+    p.then(() => (finished = true)).catch(() => {});
 
     setTimeout(() => {
       if (!finished) p.abort();
@@ -21,11 +21,16 @@ const resourceLoader = new TimeoutResourceLoader({
 export async function verifySite(site: string): Promise<boolean> {
   const base = new URL(process.env.SELF!);
   try {
-    const dom = await JSDOM.fromURL(site, {userAgent: process.env.SELF, resources: resourceLoader});
+    const dom = await JSDOM.fromURL(site, {
+      userAgent: process.env.SELF,
+      resources: resourceLoader,
+    });
     const { window } = dom;
 
     const links = [];
-    for (const el of window.document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
+    for (const el of window.document.querySelectorAll<HTMLAnchorElement>(
+      "a[href]",
+    )) {
       const link = new URL(el.getAttribute("href")!, site);
       if (link.protocol == base.protocol && link.host == base.host) {
         links.push(link);
