@@ -1,9 +1,9 @@
-import type {FileHandle} from "fs/promises";
-import { verifySite } from "./verify";
+import type { FileHandle } from "fs/promises";
+import { verifySite } from "./verify.ts";
 import { open } from "fs/promises";
 import { resolve } from "path";
 
-const dir = process.env.DATABASE || '.';
+const dir = process.env.DATABASE || ".";
 const PENDING = resolve(dir, "pending.json");
 const DEAD = resolve(dir, "dead.json");
 const SITES = resolve(dir, "sites.json");
@@ -44,7 +44,7 @@ async function getList(file: string): Promise<Array<string>> {
       const list = data ? JSON.parse(data) : [];
       return list;
     } catch (e) {
-      throw Object.assign(new Error(`error reading '${file}'`), {cause: e});
+      throw Object.assign(new Error(`error reading '${file}'`), { cause: e });
     } finally {
       await pending.close();
     }
@@ -52,17 +52,17 @@ async function getList(file: string): Promise<Array<string>> {
 }
 
 async function appendTo(fh: FileHandle, line: string): Promise<void> {
-    const data = await fh.readFile("utf-8");
-    const list = data ? JSON.parse(data) : [];
-    if (!list.includes(line)) list.push(line);
-    await fh.truncate();
-    await fh.writeFile(JSON.stringify(list, null, 2));
+  const data = await fh.readFile("utf-8");
+  const list = data ? JSON.parse(data) : [];
+  if (!list.includes(line)) list.push(line);
+  await fh.truncate();
+  await fh.writeFile(JSON.stringify(list, null, 2));
 }
 
 async function removeFrom(fh: FileHandle, line: string): Promise<void> {
   const data = await fh.readFile("utf-8");
   const list: Array<string> = data ? JSON.parse(data) : [];
-  const newList = list.filter(e => e != line);
+  const newList = list.filter((e) => e != line);
   await fh.truncate();
   await fh.writeFile(JSON.stringify(newList, null, 2));
 }
@@ -76,10 +76,7 @@ export async function addSite(site: string): Promise<void> {
         await appendTo(sites, site);
         await removeFrom(pending, site);
       } finally {
-        await Promise.all([
-          pending.close(),
-          sites.close()
-        ]);
+        await Promise.all([pending.close(), sites.close()]);
       }
     });
   });
@@ -89,7 +86,7 @@ export async function verifySites(): Promise<void> {
   const list = await getList(SITES);
   for (const site of list) {
     console.warn("Verifying", site);
-    if (!await verifySite(site)) {
+    if (!(await verifySite(site))) {
       await waitFor(DEAD, async () => {
         return waitFor(SITES, async () => {
           console.warn(site, "is dead, moving to dead list");
@@ -99,10 +96,7 @@ export async function verifySites(): Promise<void> {
             await appendTo(dead, site);
             await removeFrom(sites, site);
           } finally {
-            await Promise.all([
-              dead.close(),
-              sites.close()
-            ]);
+            await Promise.all([dead.close(), sites.close()]);
           }
         });
       });
@@ -123,7 +117,7 @@ export async function nextSite(site: string): Promise<string> {
 export async function prevSite(site: string): Promise<string> {
   const list = await getList(SITES);
   const idx = list.indexOf(site);
-  if (idx == -1) { 
+  if (idx == -1) {
     return randomSite();
   } else {
     return list[(idx + list.length - 1) % list.length];
@@ -132,5 +126,5 @@ export async function prevSite(site: string): Promise<string> {
 
 export async function randomSite(): Promise<string> {
   const list = await getList(SITES);
-  return list[Math.floor(Math.random() * list.length)]
+  return list[Math.floor(Math.random() * list.length)];
 }

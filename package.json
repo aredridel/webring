@@ -6,19 +6,17 @@
   "type": "module",
   "scripts": {
     "prepare": "json2ts -i schemas -o types/schemas",
-    "start": "tsx index.ts"
+    "start": "node index.ts"
   },
   "author": "Aria Stewart <aredridel@nbtsc.org>",
   "license": "ISC",
   "dependencies": {
-    "@fastify/formbody": "^7.4.0",
-    "dotenv": "^16.4.5",
-    "fastify": "^4.27.0",
-    "fastify-favicon": "^4.3.0",
+    "@fastify/formbody": "^8.0.2",
+    "dotenv": "^17.2.0",
+    "fastify": "^5.4.0",
+    "fastify-favicon": "^5.0.0",
     "handlebars": "^4.7.8",
-    "jsdom": "^23.0.0",
-    "tsx": "^4.11.0",
-    "typescript": "^5.4.5"
+    "jsdom": "^26.1.0"
   },
   "service": {
     "env": {
@@ -26,12 +24,17 @@
     }
   },
   "devDependencies": {
-    "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.10.12",
-    "@typescript-eslint/eslint-plugin": "^7.10.0",
-    "@typescript-eslint/parser": "^7.10.0",
-    "eslint": "^8.57.0",
-    "json-schema-to-typescript": "^14.0.4",
-    "pino-pretty": "^11.1.0"
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^24.0.15",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.31.0",
+    "json-schema-to-typescript": "^15.0.4",
+    "pino-pretty": "^13.0.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": "^24.0.0"
   }
 }

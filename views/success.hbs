@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <h1>Hooray!</h1>
 
 <p>
@@ -8,12 +6,13 @@
   forward and backward URLs.
 </p>
 
-<pre>
-&lt;a href='{{ baseURL }}/prev/{{ siteURL }}'&gt;Previous&lt;/a&gt;
-&lt;a href='{{ baseURL }}/next/{{ siteURL }}'&gt;Next&lt;/a&gt;
+<pre
+>
+&lt;a href='{{baseURL}}/prev/{{siteURL}}'&gt;Previous&lt;/a&gt;
+&lt;a href='{{baseURL}}/next/{{siteURL}}'&gt;Next&lt;/a&gt;
 </pre>
 
 <form action="/confirm" method="post">
-  <input type="hidden" name="url" value="{{ siteURL }}" />
+  <input type="hidden" name="url" value="{{siteURL}}" />
   <button>I did this</button>
 </form>
